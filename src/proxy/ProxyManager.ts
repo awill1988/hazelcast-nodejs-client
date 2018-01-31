@@ -39,6 +39,7 @@ import {Invocation} from '../invocation/InvocationService';
 import {Member} from '../core/Member';
 import {ListenerMessageCodec} from '../ListenerMessageCodec';
 import {ClientNotActiveError, HazelcastError} from '../HazelcastError';
+import {DeferredPromise} from '../util/PromiseUtil';
 
 export class ProxyManager {
     public static readonly MAP_SERVICE: string = 'hz:impl:mapService';
@@ -97,7 +98,7 @@ export class ProxyManager {
     }
 
     private createProxy(proxyObject: DistributedObject): Promise<ClientMessage> {
-        let promise = Promise.defer<ClientMessage>();
+        let promise = DeferredPromise<ClientMessage>();
         this.initializeProxy(proxyObject, promise, Date.now() + this.invocationTimeoutMillis);
         return promise.promise;
     }

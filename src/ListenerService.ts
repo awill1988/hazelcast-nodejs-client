@@ -29,6 +29,7 @@ import {Member} from './core/Member';
 import * as assert from 'assert';
 import {ListenerMessageCodec} from './ListenerMessageCodec';
 import {ClientConnection} from './invocation/ClientConnection';
+import {DeferredPromise} from './util/PromiseUtil';
 
 export class ListenerService implements ConnectionHeartbeatListener {
     private client: HazelcastClient;
@@ -121,7 +122,7 @@ export class ListenerService implements ConnectionHeartbeatListener {
     }
 
     invokeRegistrationFromRecord(userRegistrationKey: string, connection: ClientConnection): Promise<ClientEventRegistration> {
-        let deferred = Promise.defer<ClientEventRegistration>();
+        let deferred = DeferredPromise<ClientEventRegistration>();
         let activeRegsOnUserKey = this.activeRegistrations.get(userRegistrationKey);
         if (activeRegsOnUserKey !== undefined && activeRegsOnUserKey.has(connection)) {
             deferred.resolve(activeRegsOnUserKey.get(connection));
@@ -173,7 +174,7 @@ export class ListenerService implements ConnectionHeartbeatListener {
         let activeConnections = copyObjectShallow(this.client.getConnectionManager().getActiveConnections());
         let userRegistrationKey: string = UuidUtil.generate().toString();
         let connectionsOnUserKey: Map<ClientConnection, ClientEventRegistration>;
-        let deferred = Promise.defer<string>();
+        let deferred = DeferredPromise<string>();
         let registerRequest = codec.encodeAddRequest(this.isSmart());
         connectionsOnUserKey = this.activeRegistrations.get(userRegistrationKey);
         if (connectionsOnUserKey === undefined) {
@@ -209,7 +210,7 @@ export class ListenerService implements ConnectionHeartbeatListener {
     }
 
     deregisterListener(userRegistrationKey: string): Promise<boolean> {
-        let deferred = Promise.defer<boolean>();
+        let deferred = DeferredPromise<boolean>();
         let registrationsOnUserKey = this.activeRegistrations.get(userRegistrationKey);
         if (registrationsOnUserKey === undefined) {
             deferred.resolve(false);

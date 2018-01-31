@@ -22,6 +22,7 @@ import {ClientNotActiveError, HazelcastError} from '../HazelcastError';
 import {ClientConnection} from './ClientConnection';
 import {ConnectionAuthenticator} from './ConnectionAuthenticator';
 import Address = require('../Address');
+import {DeferredPromise} from '../util/PromiseUtil';
 
 const EMIT_CONNECTION_CLOSED = 'connectionClosed';
 const EMIT_CONNECTION_OPENED = 'connectionOpened';
@@ -53,7 +54,7 @@ export class ClientConnectionManager extends EventEmitter {
      */
     getOrConnect(address: Address, ownerConnection: boolean = false): Promise<ClientConnection> {
         var addressIndex = address.toString();
-        var result: Promise.Resolver<ClientConnection> = Promise.defer<ClientConnection>();
+        var result: Promise.Resolver<ClientConnection> = DeferredPromise<ClientConnection>();
 
         var establishedConnection = this.establishedConnections[addressIndex];
 

@@ -25,6 +25,7 @@ import HazelcastClient from '../HazelcastClient';
 import {ClientConnection} from './ClientConnection';
 import {IllegalStateError, ClientNotActiveError} from '../HazelcastError';
 import * as assert from 'assert';
+import {DeferredPromise} from '../util/PromiseUtil';
 
 var EXCEPTION_MESSAGE_TYPE = 109;
 const MAX_FAST_INVOCATION_COUNT = 5;
@@ -124,7 +125,7 @@ export class InvocationService {
 
     invoke(invocation: Invocation): Promise<ClientMessage> {
         var newCorrelationId = Long.fromNumber(this.correlationCounter++);
-        invocation.deferred = Promise.defer<ClientMessage>();
+        invocation.deferred = DeferredPromise<ClientMessage>();
         invocation.request.setCorrelationId(newCorrelationId);
         this.doInvoke(invocation);
         return invocation.deferred.promise;

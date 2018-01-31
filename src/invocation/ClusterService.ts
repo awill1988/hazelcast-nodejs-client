@@ -27,6 +27,7 @@ import ClientMessage = require('../ClientMessage');
 import {IllegalStateError} from '../HazelcastError';
 import * as assert from 'assert';
 import {MemberSelector} from '../core/MemberSelector';
+import {DeferredPromise} from '../util/PromiseUtil';
 
 const MEMBER_ADDED = 1;
 const MEMBER_REMOVED = 2;
@@ -90,7 +91,7 @@ export class ClusterService extends EventEmitter {
         } else {
             this.knownAddresses = this.client.getConfig().networkConfig.addresses;
         }
-        var deferred = Promise.defer<void>();
+        var deferred = DeferredPromise<void>();
         var attemptLimit = this.client.getConfig().networkConfig.connectionAttemptLimit;
         var attemptPeriod = this.client.getConfig().networkConfig.connectionAttemptPeriod;
         this.tryAddressIndex(0, attemptLimit, attemptPeriod, deferred);

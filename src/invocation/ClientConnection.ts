@@ -24,6 +24,7 @@ import {LoggingService} from '../logging/LoggingService';
 import {ClientNetworkConfig} from '../Config';
 import {ClientConnectionManager} from './ClientConnectionManager';
 import {BuildMetadata} from '../BuildMetadata';
+import {DeferredPromise} from '../util/PromiseUtil';
 
 export class ClientConnection {
     address: Address;
@@ -73,7 +74,7 @@ export class ClientConnection {
      * @returns
      */
     connect(): Promise<ClientConnection> {
-        var ready = Promise.defer<ClientConnection>();
+        var ready = DeferredPromise<ClientConnection>();
 
         var conCallback = () => {
             // Send the protocol version
@@ -106,7 +107,7 @@ export class ClientConnection {
     }
 
     write(buffer: Buffer): Promise<void> {
-        let deferred = Promise.defer<void>();
+        let deferred = DeferredPromise<void>();
         try {
             this.socket.write(buffer, (err: any) => {
                 if (err) {
