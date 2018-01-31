@@ -190,7 +190,7 @@ export class ClusterService extends EventEmitter {
                     }
                     connection.setAuthneticatedAsOwner(true);
                     this.ownerConnection = connection;
-                    this.initMemberShipListener().then(() => {
+                    return this.initMemberShipListener().then(() => {
                         deferred.resolve();
                     });
                 }).catch((e) => {
